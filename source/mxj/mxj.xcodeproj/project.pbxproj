@@ -119,6 +119,7 @@
 				08FB77ADFE841716C02AAC07 /* Source */,
 				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
 				19C28FB4FE9D528D11CA2CBB /* Products */,
+				6DF152B125BE264F0081E010 /* Frameworks */,
 			);
 			name = mxj;
 			sourceTree = "<group>";
@@ -213,6 +214,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		6DF152B125BE264F0081E010 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -273,7 +281,7 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1110;
+				LastUpgradeCheck = 1220;
 			};
 			buildConfigurationList = 0F23138D098AD861007E8020 /* Build configuration list for PBXProject "mxj" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -347,7 +355,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2271EACC1ABCEEA200F1B0C0 /* maxmspsdk.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				C74SUPPORT = "$(SRCROOT)/../maxsdk/source/c74support";
 				C74_SYM_LINKER_FLAGS = "@$(C74SUPPORT)/max-includes/c74_linker_flags.txt";
 				C74_SYM_LINKER_FLAGS_MSP = "-Wl,-U,_dsp_add,-U,_dsp_add64,-U,_z_add_signalmethod,-U,_z_dsp_free,-U,_z_dsp_setup,-U,_class_dspinit,-U,_buffer_getchannelcount,-U,_buffer_getframecount,-U,_buffer_getsamplerate,-U,_buffer_getmillisamplerate,-U,_buffer_locksamples,-U,_buffer_unlocksamples,-U,_buffer_ref_exists,-U,_buffer_ref_getobject,-U,_buffer_ref_new,-U,_buffer_ref_notify,-U,_buffer_setdirty,-U,_class_dspinitjbox,-U,_sys_getdspobjdspstate,-U,_sys_getdspstate,-U,_z_jbox_dsp_free,-U,_z_jbox_dsp_setup,-U,_dsp_resize,-U,_dspchain_start,-U,_dspchain_compile2,-U,_dspchain_tick,-U,_buffer_getinfo";
@@ -355,11 +362,6 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = "$(SRCROOT)/../../externals";
-				FRAMEWORK_SEARCH_PATHS = (
-					/Library/Frameworks,
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED)",
-					"\"$(SRCROOT)/../../c74support/msp-includes/$(C74_FRAMEWORK_PATH_SUFFIX)\"",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ./mxj_macho_prefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = "_DEBUG=1";
@@ -369,7 +371,6 @@
 					"$(C74_SYM_LINKER_FLAGS_MSP)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cycling74.${PRODUCT_NAME:rfc1034identifier}";
-				USER_HEADER_SEARCH_PATHS = "/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers $(C74SUPPORT)/msp-includes";
 			};
 			name = Development;
 		};
@@ -377,7 +378,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2271EACC1ABCEEA200F1B0C0 /* maxmspsdk.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				C74SUPPORT = "$(SRCROOT)/../maxsdk/source/c74support";
 				C74_SYM_LINKER_FLAGS = "@$(C74SUPPORT)/max-includes/c74_linker_flags.txt";
 				C74_SYM_LINKER_FLAGS_MSP = "-Wl,-U,_dsp_add,-U,_dsp_add64,-U,_z_add_signalmethod,-U,_z_dsp_free,-U,_z_dsp_setup,-U,_class_dspinit,-U,_buffer_getchannelcount,-U,_buffer_getframecount,-U,_buffer_getsamplerate,-U,_buffer_getmillisamplerate,-U,_buffer_locksamples,-U,_buffer_unlocksamples,-U,_buffer_ref_exists,-U,_buffer_ref_getobject,-U,_buffer_ref_new,-U,_buffer_ref_notify,-U,_buffer_setdirty,-U,_class_dspinitjbox,-U,_sys_getdspobjdspstate,-U,_sys_getdspstate,-U,_z_jbox_dsp_free,-U,_z_jbox_dsp_setup,-U,_dsp_resize,-U,_dspchain_start,-U,_dspchain_compile2,-U,_dspchain_tick,-U,_buffer_getinfo";
@@ -385,11 +385,6 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COPY_PHASE_STRIP = YES;
 				DSTROOT = "$(SRCROOT)/../../externals";
-				FRAMEWORK_SEARCH_PATHS = (
-					/Library/Frameworks,
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED)",
-					"\"$(SRCROOT)/../../c74support/msp-includes/$(C74_FRAMEWORK_PATH_SUFFIX)\"",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ./mxj_macho_prefix.h;
 				INFOPLIST_FILE = Info.plist;
@@ -398,7 +393,6 @@
 					"$(C74_SYM_LINKER_FLAGS_MSP)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cycling74.${PRODUCT_NAME:rfc1034identifier}";
-				USER_HEADER_SEARCH_PATHS = "/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers $(C74SUPPORT)/msp-includes";
 			};
 			name = Deployment;
 		};
@@ -418,6 +412,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -453,6 +448,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;

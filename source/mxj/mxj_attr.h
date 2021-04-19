@@ -1,13 +1,8 @@
 #ifndef _MXJ_ATTR_H
 #define _MXJ_ATTR_H
 
-#ifdef MAC_VERSION
-#include <JavaVM/jni.h>        // Java Native Interface definitions
-#include <JavaVM/jni_md.h>
-#else
-#include "jni.h"
-#include "jni_md.h"
-#endif
+#include <jni.h>
+#include <jni_md.h>
 
 typedef struct mxj_attr
 {

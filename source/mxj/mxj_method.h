@@ -1,13 +1,8 @@
 #ifndef _MXJ_METHOD_H_
 #define _MXJ_METHOD_H_
 
-#ifdef MAC_VERSION
-#include <JavaVM/jni.h>        // Java Native Interface definitions
-#include <JavaVM/jni_md.h>
-#else
-#include "jni.h"
-#include "jni_md.h"
-#endif
+#include <jni.h>
+#include <jni_md.h>
 
 // In java method foo may have multiple implementations based on parameter types.
 // This struct stores one method name with all its possible parameter types

@@ -4,13 +4,8 @@
  * Author: Herb Jellinek/Topher LaFata
  */
 
-#ifdef MAC_VERSION
-#include <JavaVM/jni.h>        // Java Native Interface definitions
-#include <JavaVM/jni_md.h>
-#else
-#include "jni.h"
-#include "jni_md.h"
-#endif
+#include <jni.h>
+#include <jni_md.h>
 
 #include "buffer.h"
 #include "IVirtualMachineAPI.h"
@@ -2702,7 +2697,8 @@ JNIEnv *jvm_new(long *exists) {
             
             }
             
-        }else
+        }
+        else
         {
             post("64 bit Architecture detected");
         }

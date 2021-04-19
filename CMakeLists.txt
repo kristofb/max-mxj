@@ -35,7 +35,7 @@ if (APPLE)
 	######################################################################
 
 
-	# Fetch the correct verion of the max-api
+	# Fetch the correct version of the max-api
 	message(STATUS "Updating Git Submodules")
 	execute_process(
 		COMMAND				git submodule update --init --recursive

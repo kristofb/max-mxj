@@ -491,7 +491,7 @@ void error_subscribe(t_object *x);
 void error_unsubscribe(t_object *x);
 
 
-void xsetpost();
+void xsetpost(void);
 void post_getpos(short *row, short *col);
 void poststring(char *s);
 // not sure where to put these...
@@ -1141,7 +1141,7 @@ void *scheduler_set(void *x);
 	@return			This routine returns a pointer to the current scheduler, 
 	@see	@ref	creating_schedulers
 */
-void *scheduler_get();
+void *scheduler_get(void);
 
 /**	Get the scheduler associated with a given object, if any. 
 

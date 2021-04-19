@@ -20,14 +20,15 @@
 
 //#define LLPLUGDEBUG
 
-#ifdef WIN_VERSION
 #include <jni.h>
+#include <jni_md.h>
+
+#ifdef WIN_VERSION
 #include <tchar.h>
 #include <Windows.h>
 #endif
 
 #ifdef MAC_VERSION
-#include <JavaVM/jni.h>
 #include <unistd.h>
 #include <strings.h>
 #include "OSXSys.h"

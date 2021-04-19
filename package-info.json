@@ -11,12 +11,12 @@
 	"name" : "max-mxj",
 	"os" : 	{
 		"macintosh" : 		{
-			"platform" : [ "ia32", "x64" ],
+			"platform" : [ "x64" ],
 			"min_version" : "none"
 		}
 ,
 		"windows" : 		{
-			"platform" : [ "ia32", "x64" ],
+			"platform" : [ "x64" ],
 			"min_version" : "none"
 		}
 

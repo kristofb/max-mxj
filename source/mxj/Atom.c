@@ -2,13 +2,8 @@
  * Atom.c -- operations on com.cycling74.max.Atom objects.
  */
 
-#ifdef MAC_VERSION
-#include <JavaVM/jni.h>        // Java Native Interface definitions
-#include <JavaVM/jni_md.h>
-#else
 #include "jni.h"
 #include "jni_md.h"
-#endif
 
 #include "dbg.h"
 #include "package.h"

@@ -1,11 +1,6 @@
 
-#ifdef MAC_VERSION
-#include <JavaVM/jni.h>        // Java Native Interface definitions
-#include <JavaVM/jni_md.h>
-#else
-#include "jni.h"
-#include "jni_md.h"
-#endif
+#include <jni.h>
+#include <jni_md.h>
 
 #include "mxj_box.h"
 #include "mxj_utils.h"

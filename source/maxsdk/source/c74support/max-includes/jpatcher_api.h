@@ -1945,12 +1945,12 @@ typedef enum _modifiers {
 /**	Return the last known combination of modifier keys being held by the user.
 	@ingroup	jmouse
 	@return		The current modifier keys that are activated.	*/
-t_modifiers jkeyboard_getcurrentmodifiers(); 
+t_modifiers jkeyboard_getcurrentmodifiers(void); 
 
 /**	Return the current combination of modifier keys being held by the user.
 	@ingroup	jmouse
 	@return		The current modifier keys that are activated.	*/
-t_modifiers jkeyboard_getcurrentmodifiers_realtime(); 
+t_modifiers jkeyboard_getcurrentmodifiers_realtime(void); 
 
 // key codes
 // key/keyup objects fourth outlet and key message to objects uses 
@@ -2045,7 +2045,7 @@ void jmouse_setposition_view(t_object *patcherview, double cx, double cy);
 	@param	by			The new y-coordinate of the mouse cursor position.	*/
 void jmouse_setposition_box(t_object *patcherview, t_object *box, double bx, double by);
 
-void *jmouse_getobject();
+void *jmouse_gevoidtobject(void);
 
 /**	Mouse cursor types.
 	@ingroup jmouse			*/
@@ -2103,7 +2103,7 @@ t_object* jwind_getat(long index);
 /**	Return the number of monitors on which can be displayed.
 	@ingroup	jmonitor
 	@return		The number of monitors.		*/
-long jmonitor_getnumdisplays();
+long jmonitor_getnumdisplays(void);
 
 /**	Return the #t_rect for a given display.
 	@ingroup				jmonitor
@@ -2149,15 +2149,15 @@ long jpatcher_is_box_namespace(t_object *p);
 t_object *jbox_get_dragtarget(t_jbox *b, char locked);
 
 // private -- internal use only
-long jpatcher_inc_maxsendcontext();
+long jpatcher_inc_maxsendcontext(void);
 
 // private -- internal use only
 long jbox_is_selected_in_view(t_object *box, t_object *view);
 
 // private -- internal use only
 t_atom_long jpatcher_dictionary_modernui(t_dictionary *d);
-t_atom_long jpatcher_dictionary_version();
-t_dictionary *jpatcher_fallback_version();
+t_atom_long jpatcher_dictionary_version(void);
+t_dictionary *jpatcher_fallback_version(void);
 long jbox_isdefaultattribute(t_jbox *x, t_symbol *attrname);
 
 
@@ -2165,25 +2165,25 @@ long jbox_isdefaultattribute(t_jbox *x, t_symbol *attrname);
 	@ingroup	jfont
 	@return		The name of Max's system font.
 */
-const char *systemfontname();
+const char *systemfontname(void);
 
 /**	Retrieve the name of Max's bold system font.
 	@ingroup	jfont
 	@return		The name of Max's bold system font.
 */
-const char *systemfontname_bold();
+const char *systemfontname_bold(void);
 
 /**	Retrieve the name of Max's light system font.
 	@ingroup	jfont
 	@return		The name of Max's light system font.
 */
-const char *systemfontname_light();
+const char *systemfontname_light(void);
 
 /**	Retrieve the name of Max's system font as a symbol.
 	@ingroup	jfont
 	@return		The name of Max's system font.
 */
-t_symbol *systemfontsym();
+t_symbol *systemfontsym(void);
 
 
 #define JPATCHER_DEFAULT_EXTENSION ".maxpat"

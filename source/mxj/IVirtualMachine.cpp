@@ -260,6 +260,8 @@ void IVirtualMachine::startJVM()
 	//we look to the environment for an embedded path
 	char * embeddedEnvironment = getenv("EMBEDDED_JVM_LIBRARY_PATH");
 	char * embeddedJliEnvironment = getenv("EMBEDDED_JLI_LIBRARY_PATH");
+	error("embeddedEnvironment=%s", embeddedEnvironment);
+	error("embeddedJliEnvironment=%s", embeddedJliEnvironment);
 
 	if(embeddedEnvironment!=NULL)
 		dylib = embeddedEnvironment;
@@ -276,7 +278,11 @@ void IVirtualMachine::startJVM()
 	//in the case of Apple java 1.6 for example this will not result in a problem
 	if(jli!= NULL)
 	{
-		dlopen(jli, RTLD_NOW + RTLD_GLOBAL);
+		void *jliHandle = dlopen(jli, RTLD_NOW + RTLD_GLOBAL);
+		if (jliHandle == NULL)
+		{
+			error("cannot open jli: %s", dlerror());
+		}
 	}
 
 	if(dylib!=NULL)
@@ -294,6 +300,7 @@ void IVirtualMachine::startJVM()
 #endif
 
 	// launch the jvm
+	error("will launchJVM");
 	launchJVM();
 }
 
@@ -564,6 +571,8 @@ void IVirtualMachine::addJavaOption(string newOption)
  */
 bool IVirtualMachine::launchJVM()
 {
+	error("launching jvm");
+
 	size_t j = 0;
 
 	if(this->isLaunched)

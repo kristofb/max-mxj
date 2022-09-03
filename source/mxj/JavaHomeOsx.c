@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <strings.h>
 #include <dlfcn.h>
+void error(char *fmt, ...);
 
 #define MXJ_JAVA_PATH_MAX_LEN 4096
 
@@ -131,6 +132,7 @@ char *getEmbeddedHomeDirectoryFromBinaryPath(const char *mxjSuffix, const char *
     {
         return strdup(embeddedHome);
     }
+    error("don't exists: %s", embeddedHome);
     return NULL;
 }
 
@@ -180,12 +182,19 @@ char *getEmbeddedHomeDirectory()
                             if (res!=NULL)
                             {
                                 privateEmbeddedHomeDirectory = res;
+                                error("got home %s", privateEmbeddedHomeDirectory);
                                 break;
                             }
                         }
+                        else
+                            error("no full name");
                     }
+                    else
+                        error("don't have ending %s %s", myPluginInfo.dli_fname, mxjSuffix);
                 }
             }
+            else
+                error("dli_fname is null");
         }
     }
     return privateEmbeddedHomeDirectory;
@@ -391,15 +400,19 @@ char *getJavaJli()
     // Check if JDK jli is found
     if (!fileExists(path, false))
     {
+        error("jdk jli not found %s", path);
         // Not found, search JRE
         // This is needed when embeddedHomeDirectory is not NULL, which means we found an embedded JRE (so no JDK at home path)
         snprintf(path, sizeof(path), "%s/lib/jli/libjli.dylib", home); // This is that path from at least JRE 8, compatible with osx 10.7.3+
 
         if (!fileExists(path, false))
         {
+            error("jre jli not found %s", path);
+
             return NULL; // Nothing found
         }
     }
+    error("got jli %s", path);
     return strdup(path);
 }
 

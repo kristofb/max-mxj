@@ -31,9 +31,13 @@ Use the badges above to go directly to the CI services.
 ## To build (Windows)
 Download the Windows x64 Java SE Development Kit 8 (from http://www.oracle.com and install it in the default location (C:\Program Files\Java).
 
+To install CMAKE :
+https://github.com/Kitware/CMake/releases/download/v4.2.3/cmake-4.2.3-windows-x86_64.msi
+
 Download and install Cmake.
 Define variable JAVA_HOME with `rundll32.exe sysdm.cpl,EditEnvironmentVariables`
 * JAVA_HOME => "C:\Program Files\Java\jdk1.8.0_xxx"
+* `echo %JAVA_HOME%`
 
 * after that, launch a new shell, then from max-mxj folder:
 * `mkdir build`

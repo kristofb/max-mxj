@@ -7,7 +7,7 @@
 #include <jni.h>
 #include "mxj_win.h"
 
-jboolean debug=false;
+jboolean debug=true;
 
 //from launcher/java.c
 
@@ -311,11 +311,20 @@ GetJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath
 	struct stat s;
 
 	if (GetApplicationHome(javaHomePath, javaHomePathSize)) {
+		if (debug) {
+			post("Searching for " JAVA_DLL " in application home directory: %s\n", javaHomePath);
+		}
 		/* Is JRE co-located with the application? */
 		sprintf(javadll, "%s\\bin\\" JAVA_DLL, javaHomePath);
 		if (stat(javadll, &s) == 0) {
 			strncpy_zero(runtimeLibraryPath, javadll, runtimeLibraryPathSize);
+			if (debug) {
+				post("Found %s\n", javadll);
+			}
 			goto found;
+		}
+		if (debug) {
+			post("Didn't find %s\n", javadll);
 		}
 
 		/* Does this app ship a private JRE in <apphome>\jre directory? */
@@ -323,11 +332,20 @@ GetJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath
 		if (stat(javadll, &s) == 0) {
 			strcat(javaHomePath, "\\jre");
 			strncpy_zero(runtimeLibraryPath, javadll, runtimeLibraryPathSize);
+			if (debug) {
+				post("Found %s\n", javadll);
+			}
 			goto found;
+		}
+		if (debug) {
+			post("Didn't find %s\n", javadll);
 		}
 	}
 
 	/* Look for a public JRE on this machine. */
+	if (debug) {
+		post("Looking for a public JRE on this machine...\n");
+	}
 	if (GetPublicJavaPaths(javaHomePath, javaHomePathSize, runtimeLibraryPath, runtimeLibraryPathSize)) {
 		goto found;
 	}
@@ -431,6 +449,9 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 	const char **jrekey = JRE_Keys;
 
 	while (*jrekey) {
+		if (debug) {
+			fprintf(stderr, "Looking for registry key '%s'...\n", *jrekey);
+		}
 		/* Find the current version of the JRE */
 		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, *jrekey, 0, KEY_READ, &key) != 0) {
 			if (debug) {
@@ -438,6 +459,9 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			}
 			jrekey++;
 			continue;
+		}
+		if (debug) {
+			fprintf(stdout, "Found registry key '%s'\n", *jrekey);
 		}
 
 		if (!GetStringFromRegistry(key, "CurrentVersion", version, sizeof(version))) {
@@ -447,6 +471,9 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			RegCloseKey(key);
 			jrekey++;
 			continue;
+		}
+		if (debug) {
+			fprintf(stdout, "CurrentVersion of registry key '%s' is '%s'\n", *jrekey, version);
 		}
 
 		/* Find directory where the current version is installed. */
@@ -458,6 +485,9 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			jrekey++;
 			continue;
 		}
+		if (debug) {
+			fprintf(stdout, "Found registry key '%s\\%s'\n", *jrekey, version);
+		}
 
 		if (!GetStringFromRegistry(subkey, "JavaHome", javaHomePath, javaHomePathSize)) {
 			if (debug) {
@@ -467,6 +497,9 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			RegCloseKey(subkey);
 			jrekey++;
 			continue;
+		}
+		if (debug) {
+			fprintf(stdout, "JavaHome of registry key '%s\\%s' is '%s'\n", *jrekey, version, javaHomePath);
 		}
 
 		// ensure that this path also contains a runtime dll, otherwise...
@@ -479,6 +512,9 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			RegCloseKey(subkey);
 			jrekey++;
 			continue;
+		}
+		if (debug) {
+			fprintf(stdout, "RuntimeLib of registry key '%s\\%s' is '%s'\n", *jrekey, version, runtimeLibraryPath);
 		}
 
 		if (debug) {
@@ -579,5 +615,3 @@ long mxj_platform_init()
 	}
 	return 0;
 }
-
-

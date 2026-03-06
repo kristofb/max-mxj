@@ -19,5 +19,5 @@ Your pull request should:
 
 ## Java Compiler Settings
 
-MXJ must be able to execute successfully using Java 6 (the version installed by Apple for many years and still present on many user systems). Thus it is important to use `-target 6` when compiling.
+MXJ must be able to execute successfully using Java 8 (the version installed by Apple for many years and still present on many user systems). Thus it is important to use `-target 8` when compiling.
 

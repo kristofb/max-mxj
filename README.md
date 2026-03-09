@@ -29,7 +29,7 @@ Use the badges above to go directly to the CI services.
 
 
 ## To build (Windows)
-Download the Windows x64 Java SE Development Kit 8 (from http://www.oracle.com and install it in the default location (C:\Program Files\Java).
+Download the Windows x64 Java SE Development Kit 8, from http://www.oracle.com and install it in the default location (C:\Program Files\Java).
 
 To install CMAKE :
 https://github.com/Kitware/CMake/releases/download/v4.2.3/cmake-4.2.3-windows-x86_64.msi
@@ -43,7 +43,7 @@ Define variable JAVA_HOME with `rundll32.exe sysdm.cpl,EditEnvironmentVariables`
 * `mkdir build`
 * `cd build`
 * `set CUSTOM_FLAG="-DWIN64:Bool=True"`
-* `cmake -G "Visual Studio 17 2022 Win64" ..`  (update version according to your Visual studio version, Win64 is mandatory)
+* `cmake -G "Visual Studio 17 2022" -A x64 -S .. -B .`  (update version according to your Visual studio version, Win64 is mandatory)
 * `cmake --build .` (or open the VS project in this build folder and build there)
 * `cmake --build . --config Release`
 

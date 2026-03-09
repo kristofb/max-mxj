@@ -174,7 +174,7 @@ GetJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath
 		goto found;
 	}
 
-	fprintf(stderr, "Error: could not find " JAVA_DLL "\n");
+	error("Error: could not find " JAVA_DLL "\n");
 	return JNI_FALSE;
 
 found:
@@ -272,50 +272,54 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 	char rtlib[MAXPATHLEN];
 	const char **jrekey = JRE_Keys;
 
-	while (*jrekey) {
+	if (debug) {
+		post("Looking for a public JRE in the registry... starting with %s\n", *jrekey);
+	}
+
+	while (*jrekey != NULL) {
 		if (debug) {
-			fprintf(stderr, "Looking for registry key '%s'...\n", *jrekey);
+			post("Looking for registry key '%s'...\n", *jrekey);
 		}
 		/* Find the current version of the JRE */
 		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, *jrekey, 0, KEY_READ, &key) != 0) {
 			if (debug) {
-				fprintf(stderr, "Error opening registry key '%s'\n", *jrekey);
+				post("Error opening registry key '%s'\n", *jrekey);
 			}
 			jrekey++;
 			continue;
 		}
 		if (debug) {
-			fprintf(stdout, "Found registry key '%s'\n", *jrekey);
+			post("Found registry key '%s'\n", *jrekey);
 		}
 
 		if (!GetStringFromRegistry(key, "CurrentVersion", version, sizeof(version))) {
 			if (debug) {
-				fprintf(stderr, "Failed reading value of registry key:\n\t%s\\CurrentVersion\n", *jrekey);
+				post("Failed reading value of registry key:\n\t%s\\CurrentVersion\n", *jrekey);
 			}
 			RegCloseKey(key);
 			jrekey++;
 			continue;
 		}
 		if (debug) {
-			fprintf(stdout, "CurrentVersion of registry key '%s' is '%s'\n", *jrekey, version);
+			post("CurrentVersion of registry key '%s' is '%s'\n", *jrekey, version);
 		}
 
 		/* Find directory where the current version is installed. */
 		if (RegOpenKeyEx(key, version, 0, KEY_READ, &subkey) != 0) {
 			if (debug) {
-				fprintf(stderr, "Error opening registry key '%s\\%s'\n", *jrekey, version);
+				post("Error opening registry key '%s\\%s'\n", *jrekey, version);
 			}
 			RegCloseKey(key);
 			jrekey++;
 			continue;
 		}
 		if (debug) {
-			fprintf(stdout, "Found registry key '%s\\%s'\n", *jrekey, version);
+			post("Found registry key '%s\\%s'\n", *jrekey, version);
 		}
 
 		if (!GetStringFromRegistry(subkey, "JavaHome", javaHomePath, javaHomePathSize)) {
 			if (debug) {
-				fprintf(stderr, "Failed reading value of registry key:\n\t%s\\%s\\JavaHome\n", *jrekey, version);
+				post("Failed reading value of registry key:\n\t%s\\%s\\JavaHome\n", *jrekey, version);
 			}
 			RegCloseKey(key);
 			RegCloseKey(subkey);
@@ -323,14 +327,14 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			continue;
 		}
 		if (debug) {
-			fprintf(stdout, "JavaHome of registry key '%s\\%s' is '%s'\n", *jrekey, version, javaHomePath);
+			post("JavaHome of registry key '%s\\%s' is '%s'\n", *jrekey, version, javaHomePath);
 		}
 
 		// ensure that this path also contains a runtime dll, otherwise...
 		// TODO: should we search the javaHome for a runtime lib in this case if none is found?
 		if (!GetStringFromRegistry(subkey, "RuntimeLib", runtimeLibraryPath, runtimeLibraryPathSize)) {
 			if (debug) {
-				fprintf(stderr, "Failed reading value of registry key:\n\t%s\\%s\\RuntimeLib\n", *jrekey, version);
+				post("Failed reading value of registry key:\n\t%s\\%s\\RuntimeLib\n", *jrekey, version);
 			}
 			RegCloseKey(key);
 			RegCloseKey(subkey);
@@ -338,7 +342,7 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			continue;
 		}
 		if (debug) {
-			fprintf(stdout, "RuntimeLib of registry key '%s\\%s' is '%s'\n", *jrekey, version, runtimeLibraryPath);
+			post("RuntimeLib of registry key '%s\\%s' is '%s'\n", *jrekey, version, runtimeLibraryPath);
 		}
 
 		if (debug) {

@@ -34,6 +34,7 @@ jboolean debug=true;
 /*
  * Prototypes.
  */
+static jboolean GetJavaHomeFromEnv(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize);
 static jboolean GetPublicJavaPathsFromRegistry(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize);
 static jboolean GetJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize);
 
@@ -134,6 +135,9 @@ GetJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath
 	char javadll[MAXPATHLEN];
 	struct stat s;
 
+	// First look for a JRE co-located with the application. 
+	// This allows an app to ship with its own private JRE, and also allows us to find the JRE on computer 
+	// even without installing JRE from an Oracle installer writing the registry.
 	if (GetApplicationHome(javaHomePath, javaHomePathSize)) {
 		if (debug) {
 			post("Searching for " JAVA_DLL " in application home directory: %s\n", javaHomePath);
@@ -170,6 +174,16 @@ GetJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath
 	if (debug) {
 		post("Looking for a public JRE on this machine...\n");
 	}
+
+	// Search for a JRE in JAVA_HOME or JDK_HOME environment variable. 
+	// This is useful for JRE or JDK installed from a ZIP file, with environment variable manually set by user.
+	if (GetJavaHomeFromEnv(javaHomePath, javaHomePathSize, runtimeLibraryPath, runtimeLibraryPathSize)) {
+		goto found;
+	}
+
+	// Search in the registry for a JDK or JRE.
+	// Oracle installers for the JDK and JRE write registry keys that include the path to the Java home,
+	// so we can use this information to find a JRE even if JAVA_HOME or JDK_HOME environment variables are not set.
 	if (GetPublicJavaPathsFromRegistry(javaHomePath, javaHomePathSize, runtimeLibraryPath, runtimeLibraryPathSize)) {
 		goto found;
 	}
@@ -264,6 +278,58 @@ static const char* JRE_Keys[] = {
 	NULL
 };
 
+
+static jboolean
+GetPublicJavaRuntimeFromJavaHome(char *javaHomePath, char *runtimeLibraryPath, jint runtimeLibraryPathSize)
+{
+	if (debug) {
+		post("Looking for java runtime " JVM_DLL " from java home: %s\n", javaHomePath);
+	}
+
+	// Check if we can find the runtime library in the java home path, as modern versions of 
+	// the JDK/JRE don't always have the RuntimeLib registry key. If we can find it there, then we can use this JRE/JDK.
+	char javadll[MAXPATHLEN];
+	sprintf(javadll, "%s\\bin\\server\\" JVM_DLL, javaHomePath);
+	struct stat s;
+	bool found = false;
+	if (stat(javadll, &s) == 0) {
+		strncpy_zero(runtimeLibraryPath, javadll, runtimeLibraryPathSize);
+		if (debug) {
+			post("RuntimeLib found: '%s'\n", runtimeLibraryPath);
+		}
+		return JNI_TRUE;
+	}
+	if (debug) {
+		post("Failed to find runtime library " JVM_DLL " in java home path: %s\n", javaHomePath);
+	}
+	return JNI_FALSE;
+}
+
+/*
+ * Get Java home path from the environment variable JAVA_HOME or JDK_HOME.  If these variables are not set, return JNI_FALSE.
+ * Returns JNI_TRUE if we find a JRE and set the javaHomePath and runtimeLibraryPath output parameters; returns JNI_FALSE otherwise.
+ */
+jboolean
+GetJavaHomeFromEnv(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize)
+{
+	char *env = getenv("JAVA_HOME");
+	if (env == NULL) {
+		env = getenv("JDK_HOME");
+	}
+	if (env == NULL) {
+		return JNI_FALSE;
+	}
+
+	// Found java home.
+	strncpy_zero(javaHomePath, env, javaHomePathSize);
+	return GetPublicJavaRuntimeFromJavaHome(javaHomePath, runtimeLibraryPath, runtimeLibraryPathSize);
+}
+
+
+/*
+ * Get public Java paths from the registry. The registry keys we look for are defined when installing JRE/JDK from Oracle installers.
+ * Returns JNI_TRUE if we find a JRE and set the javaHomePath and runtimeLibraryPath output parameters; returns JNI_FALSE otherwise.
+ */
 static jboolean
 GetPublicJavaPathsFromRegistry(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize)
 {
@@ -337,25 +403,12 @@ GetPublicJavaPathsFromRegistry(char *javaHomePath, jint javaHomePathSize, char *
 				post("Failed reading value of registry key:\n\t%s\\%s\\RuntimeLib\n", *jrekey, version);
 			}
 
-			// Check if we can find the runtime library in the java home path, as modern versions of 
-			// the JDK/JRE don't always have the RuntimeLib registry key. If we can find it there, then we can use this JRE/JDK.
-			char javadll[MAXPATHLEN];
-			sprintf(javadll, "%s\\bin\\server\\" JVM_DLL, javaHomePath);
-			struct stat s;
-			bool found = false;
-			if (stat(javadll, &s) == 0) {
-				strncpy_zero(runtimeLibraryPath, javadll, runtimeLibraryPathSize);
-				found = true;
-			}
-			if (!found) {
+			if (!GetPublicJavaRuntimeFromJavaHome(javaHomePath, runtimeLibraryPath, runtimeLibraryPathSize)) {
 				RegCloseKey(key);
 				RegCloseKey(subkey);
 				jrekey++;
 				continue;
 			}
-		}
-		if (debug) {
-			post("RuntimeLib found is version %s: '%s'\n", version, runtimeLibraryPath);
 		}
 
 		// MicroVersion is not present in all versions of the JRE, but if it is present, print it out for debugging purposes.

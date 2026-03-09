@@ -34,7 +34,7 @@ jboolean debug=true;
 /*
  * Prototypes.
  */
-static jboolean GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize);
+static jboolean GetPublicJavaPathsFromRegistry(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize);
 static jboolean GetJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize);
 
 const char *
@@ -170,7 +170,7 @@ GetJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath
 	if (debug) {
 		post("Looking for a public JRE on this machine...\n");
 	}
-	if (GetPublicJavaPaths(javaHomePath, javaHomePathSize, runtimeLibraryPath, runtimeLibraryPathSize)) {
+	if (GetPublicJavaPathsFromRegistry(javaHomePath, javaHomePathSize, runtimeLibraryPath, runtimeLibraryPathSize)) {
 		goto found;
 	}
 
@@ -265,7 +265,7 @@ static const char* JRE_Keys[] = {
 };
 
 static jboolean
-GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize)
+GetPublicJavaPathsFromRegistry(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath, jint runtimeLibraryPathSize)
 {
 	HKEY key, subkey;
 	char version[MAXPATHLEN];

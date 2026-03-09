@@ -261,7 +261,7 @@ static const char* JRE_Keys[] = {
 	"SOFTWARE\\JavaSoft\\Java Development Kit",
 	"SOFTWARE\\JavaSoft\\JRE", // look for the new one first
 	"SOFTWARE\\JavaSoft\\Java Runtime Environment",
-	0
+	NULL
 };
 
 static jboolean

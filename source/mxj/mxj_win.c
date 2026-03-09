@@ -336,13 +336,26 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			if (debug) {
 				post("Failed reading value of registry key:\n\t%s\\%s\\RuntimeLib\n", *jrekey, version);
 			}
-			RegCloseKey(key);
-			RegCloseKey(subkey);
-			jrekey++;
-			continue;
+
+			// Check if we can find the runtime library in the java home path, as modern versions of 
+			// the JDK/JRE don't always have the RuntimeLib registry key. If we can find it there, then we can use this JRE/JDK.
+			char javadll[MAXPATHLEN];
+			sprintf(javadll, "%s\\bin\\server\\" JVM_DLL, javaHomePath);
+			struct stat s;
+			bool found = false;
+			if (stat(javadll, &s) == 0) {
+				strncpy_zero(runtimeLibraryPath, javadll, runtimeLibraryPathSize);
+				found = true;
+			}
+			if (!found) {
+				RegCloseKey(key);
+				RegCloseKey(subkey);
+				jrekey++;
+				continue;
+			}
 		}
 		if (debug) {
-			post("RuntimeLib of registry key '%s\\%s' is '%s'\n", *jrekey, version, runtimeLibraryPath);
+			post("RuntimeLib found is version %s: '%s'\n", version, runtimeLibraryPath);
 		}
 
 		// MicroVersion is not present in all versions of the JRE, but if it is present, print it out for debugging purposes.

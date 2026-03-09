@@ -345,6 +345,8 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			post("RuntimeLib of registry key '%s\\%s' is '%s'\n", *jrekey, version, runtimeLibraryPath);
 		}
 
+		// MicroVersion is not present in all versions of the JRE, but if it is present, print it out for debugging purposes.
+		/*
 		if (debug) {
 			char micro[MAXPATHLEN];
 			if (!GetStringFromRegistry(subkey, "MicroVersion", micro, sizeof(micro))) {
@@ -353,6 +355,7 @@ GetPublicJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibra
 			}
 			post("Version major.minor.micro = %s.%s\n", version, micro);
 		}
+		*/
 
 		RegCloseKey(key);
 		RegCloseKey(subkey);

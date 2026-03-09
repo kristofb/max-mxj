@@ -55,11 +55,11 @@ void AddJavaBinFolderToPath(const char *javahome)
 
 	long len;
 
-	strcpy(binpath, javahome);
+	strcpy_s(binpath, sizeof(binpath), javahome);
 	if (binpath[strlen(binpath)-1] != '\\') {
-		strcat(binpath, "\\");
+		strcat_s(binpath, sizeof(binpath), "\\");
 	}
-	strcat(binpath, "bin");
+	strcat_s(binpath, sizeof(binpath), "bin");
 
 	// Get current path
 	len = GetEnvironmentVariable("path", current_path, 0);
@@ -71,9 +71,9 @@ void AddJavaBinFolderToPath(const char *javahome)
 	next_path = (CHAR*)sysmem_newptr(len * sizeof(CHAR));
 	if (next_path) {
 		// JRE path first, it will be used first when searching path
-		strcpy(next_path, binpath);
-		strcat(next_path, ";");
-		strcat(next_path, current_path);
+		strcpy_s(next_path, len, binpath);
+		strcat_s(next_path, len, ";");
+		strcat_s(next_path, len, current_path);
 
 		SetEnvironmentVariable("path", next_path);
 		sysmem_freeptr(next_path);
@@ -154,7 +154,7 @@ GetJavaPaths(char *javaHomePath, jint javaHomePathSize, char *runtimeLibraryPath
 		/* Does this app ship a private JRE in <apphome>\jre directory? */
 		sprintf(javadll, "%s\\jre\\bin\\" JAVA_DLL, javaHomePath);
 		if (stat(javadll, &s) == 0) {
-			strcat(javaHomePath, "\\jre");
+			strcat_s(javaHomePath, javaHomePathSize, "\\jre");
 			strncpy_zero(runtimeLibraryPath, javadll, runtimeLibraryPathSize);
 			if (debug) {
 				post("Found %s\n", javadll);
@@ -220,7 +220,7 @@ GetXUsagePath(char *buf, jint bufsize)
 {
 	GetModuleFileName(GetModuleHandle(JVM_DLL), buf, bufsize);
 	*(strrchr(buf, '\\')) = '\0';
-	strcat(buf, "\\Xusage.txt");
+	strcat_s(buf, bufsize, "\\Xusage.txt");
 }
 
 /*

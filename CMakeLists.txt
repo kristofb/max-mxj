@@ -10,7 +10,7 @@ if (APPLE)
 	endif ()
 else ()
 	if (CMAKE_SYSTEM_VERSION STREQUAL "")
-		set(CMAKE_SYSTEM_VERSION 6.1)
+		set(CMAKE_SYSTEM_VERSION 10.0)
 	endif ()
 	# Windows 7   => 6.1
 	# Windows 8   => 6.2

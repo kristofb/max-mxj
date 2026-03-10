@@ -158,7 +158,7 @@ private:
 	HMODULE handle;
 	_TCHAR* findLib();
 	_TCHAR* checkVMRegistryKey(HKEY jreKey, _TCHAR* subKeyName);
-	void logLastError(LPTSTR lpszFunction);
+	static void logLastError(LPTSTR lpszFunction);
 #else
 	void * handle;
 #endif

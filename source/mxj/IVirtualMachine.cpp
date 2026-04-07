@@ -652,20 +652,8 @@ bool IVirtualMachine::launchJVM()
 #endif
 
 #ifdef MAC_VERSION
-
-	//first see if the apple naming is active
-	WRAPPED_JNI_CreateJavaVM my_JNI_CreateJavaVM = (WRAPPED_JNI_CreateJavaVM) dlsym(handle,"JNI_CreateJavaVM_Impl");
-
-	//we need to try the possibility that this is not Apple JVM where they mangle the names by appending _impl
-	if(my_JNI_CreateJavaVM == NULL){
-		my_JNI_CreateJavaVM = (WRAPPED_JNI_CreateJavaVM) dlsym(handle,"JNI_CreateJavaVM");
-	}
-
-	WRAPPED_JNI_GetCreatedJavaVMs my_JNI_GetCreatedJavaVMs = (WRAPPED_JNI_GetCreatedJavaVMs)dlsym(handle,"JNI_GetCreatedJavaVMs_Impl");
-
-	if(my_JNI_GetCreatedJavaVMs == NULL){
-		my_JNI_GetCreatedJavaVMs = (WRAPPED_JNI_GetCreatedJavaVMs)dlsym(handle,"JNI_GetCreatedJavaVMs");
-	}
+	WRAPPED_JNI_CreateJavaVM my_JNI_CreateJavaVM = (WRAPPED_JNI_CreateJavaVM) dlsym(handle,"JNI_CreateJavaVM");
+	WRAPPED_JNI_GetCreatedJavaVMs my_JNI_GetCreatedJavaVMs = (WRAPPED_JNI_GetCreatedJavaVMs)dlsym(handle,"JNI_GetCreatedJavaVMs");
 #endif
 
 	//catch the condition here that we really can't map our main functions

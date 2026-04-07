@@ -16,6 +16,7 @@
 #include <assert.h>
 #include "IVirtualMachine.h"
 #include "OSXSys.h"
+#include "jni_version.h"
 
 //here we need type definitions that will map in when jvm.dll (or dylib) is loaded
 typedef _JNI_IMPORT_OR_EXPORT_ jint	 (*WRAPPED_JNI_CreateJavaVM)(JavaVM **pvm, void **penv, void *args);
@@ -634,7 +635,7 @@ bool IVirtualMachine::launchJVM()
 		nbOptions++;
 	}
 
-	vm_args.version = JNI_VERSION_1_6;					 /* Specifies the JNI version used */
+	vm_args.version = MY_JNI_VERSION;					 /* Specifies the JNI version used */
 
 	vm_args.options	 = options;
 	vm_args.nOptions = nbOptions;
@@ -667,7 +668,7 @@ bool IVirtualMachine::launchJVM()
 	if (nVMs > 0)
 	{
 		jvm = vmBuffer[nVMs-1];
-		res = jvm->GetEnv((void**)&env, JNI_VERSION_1_6);
+		res = jvm->GetEnv((void**)&env, MY_JNI_VERSION);
 		if (res == JNI_EDETACHED)
 		{
 			res = jvm->AttachCurrentThread((void**)&env, NULL);

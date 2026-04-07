@@ -23,6 +23,7 @@
 #include "mjglobals.h"
 #include "maxjava.h"
 #include "copyprot.h"
+#include "jni_version.h"
 #include "classes.h"
 #include "ExceptionUtils.h"
 #include "callbacks.h"
@@ -2604,7 +2605,7 @@ JNIEnv *jvm_new(long *exists) {
 		}
  		#endif // MAC_VERSION
 
-	    vmArgs.version = JNI_VERSION_1_6;
+	    vmArgs.version = MY_JNI_VERSION;
 	    vmArgs.nOptions = numOptions;
 	    vmArgs.options = options;
 	    vmArgs.ignoreUnrecognized = JNI_TRUE;

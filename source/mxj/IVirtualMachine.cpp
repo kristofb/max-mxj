@@ -15,6 +15,7 @@
 #endif
 #include <assert.h>
 #include "IVirtualMachine.h"
+#include "OSXSys.h"
 
 //here we need type definitions that will map in when jvm.dll (or dylib) is loaded
 typedef _JNI_IMPORT_OR_EXPORT_ jint	 (*WRAPPED_JNI_CreateJavaVM)(JavaVM **pvm, void **penv, void *args);
@@ -948,7 +949,7 @@ jstring get_system_property(ivirtualmachine* v,char * property)
 	string myProp(property);
 	return real(v)->getSystemProperty(myProp);
 }
-bool is64BitArchitecture(ivirtualmachine* v){return real(v)->is64BitArchitecture();}
+bool is64BitArchitecture(ivirtualmachine* v){return true;} // we only support 64 bit now, so this is hard coded to true
 int getMajorOSVersion(ivirtualmachine* v){return real(v)->majorOSVersion();}
 }
 
@@ -989,24 +990,12 @@ void IVirtualMachine::logLastError(LPTSTR lpszFunction){
 #endif
 
 
-bool IVirtualMachine::is64BitArchitecture()
-{
-	bool retval = false;
-#ifdef MAC_VERSION
-	OSXSys q;
-	retval = q.is64BitRunning();
-#endif
-	return retval;
-}
 int IVirtualMachine::majorOSVersion()
 {
 
 	int retval = 0 ;
 #ifdef MAC_VERSION
-	OSXSys q;
-	retval = q.getMajorOSVersion();
+	retval = findMajorOSVersion();
 #endif
 	return retval;
 }
-
-

@@ -436,21 +436,36 @@ char *getJavaJli()
         return NULL;
     }
 
-    // Search JDK
+    // Path 1: JDK bundle layout — <home>/Contents/Home/../MacOS/libjli.dylib
+    //         Applies to JDK 8–21+ installed as a .pkg / .dmg on macOS.
     snprintf(path, sizeof(path), "%s/../MacOS/libjli.dylib", home);
-    // Check if JDK jli is found
-    if (!fileExists(path, false))
+    if (fileExists(path, false))
     {
-        // Not found, search JRE
-        // This is needed when embeddedHomeDirectory is not NULL, which means we found an embedded JRE (so no JDK at home path)
-        snprintf(path, sizeof(path), "%s/lib/jli/libjli.dylib", home); // This is that path from at least JRE 8, compatible with osx 10.7.3+
-
-        if (!fileExists(path, false))
-        {
-            return NULL; // Nothing found
-        }
+        post("getJavaJli: found (JDK bundle): %s", path);
+        return strdup(path);
     }
-    return strdup(path);
+
+    // Path 2: Flat lib layout — <home>/lib/libjli.dylib
+    //         Used by JDK 17+ distributions (Temurin, Zulu, Liberica, etc.)
+    //         where libjli.dylib is no longer in a jli/ subdirectory.
+    snprintf(path, sizeof(path), "%s/lib/libjli.dylib", home);
+    if (fileExists(path, false))
+    {
+        post("getJavaJli: found (JDK 17+ flat): %s", path);
+        return strdup(path);
+    }
+
+    // Path 3: Legacy JRE 8 subdirectory layout — <home>/lib/jli/libjli.dylib
+    //         Compatible with macOS 10.7.3+ JRE installations.
+    snprintf(path, sizeof(path), "%s/lib/jli/libjli.dylib", home);
+    if (fileExists(path, false))
+    {
+        post("getJavaJli: found (JRE 8 legacy): %s", path);
+        return strdup(path);
+    }
+
+    post("getJavaJli: libjli.dylib not found under %s", home);
+    return NULL;
 }
 
 // const char * findVMLibrary( char* command ) {

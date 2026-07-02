@@ -620,6 +620,7 @@ bool IVirtualMachine::launchJVM()
 	libraryPathString=(char *)malloc(constLibraryPath->size()+1);
 	strcpy(libraryPathString, constLibraryPath->data());
 
+	post("library path: %s", libraryPathString);
 
 	nbOptions=0;
 	options[nbOptions].optionString = libraryPathString;
@@ -631,6 +632,7 @@ bool IVirtualMachine::launchJVM()
 		this->additionalOptions[nbOptions] = (char *)malloc((*i).size()+1);
 		strcpy(additionalOptions[nbOptions], (*i).data());
 		options[nbOptions].optionString = additionalOptions[nbOptions];
+		post("jvm option: %s", options[nbOptions].optionString);
 		nbOptions++;
 	}
 

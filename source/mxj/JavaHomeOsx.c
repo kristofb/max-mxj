@@ -130,8 +130,10 @@ char *getEmbeddedHomeDirectoryFromBinaryPath(const char *mxjSuffix, const char *
     // Check for folder
     if (fileExists(embeddedHome, true))
     {
+        post("embedded jre home found: %s", embeddedHome);
         return strdup(embeddedHome);
     }
+    post("embedded jre home not found: %s", embeddedHome);
     return NULL;
 }
 
@@ -152,6 +154,7 @@ char *getEmbeddedHomeDirectory()
         {
             if (myPluginInfo.dli_fname != NULL)
             {
+                post("mxj binary path found: %s", myPluginInfo.dli_fname);
                 for (int q = 0; (mxjSuffixes[q] != NULL) && (privateEmbeddedHomeDirectory == NULL); ++q)
                 {
                     const char *mxjSuffix = mxjSuffixes[q];
@@ -160,6 +163,7 @@ char *getEmbeddedHomeDirectory()
                         const char *fullName = myPluginInfo.dli_fname; // Full binary path name
                         if (fullName != NULL)
                         {
+                            post("mxj binary found: fullName: %s, mxjSuffix: %s", fullName, mxjSuffix);
                             char *res;
                             // If a Universal jre exists or for a single architecture application, or Intel application under Rosetta
                             res = getEmbeddedHomeDirectoryFromBinaryPath(mxjSuffix, fullName, "jre/Contents/Home");
@@ -358,16 +362,20 @@ char *getHome()
 
         // Search embedded JRE
         char *embeddedHome = getEmbeddedHomeDirectory();
+        post("getHome: embeddedHome: %s", embeddedHome != NULL ? embeddedHome : "NULL");
         if (embeddedHome != NULL) { privateJavaHomeDirectory = embeddedHome; }
         else
         {
             // Nothing embedded, search JDK
             char *jdkHome = getJDKHome();
+            post("getHome: jdkHome: %s", jdkHome != NULL ? jdkHome : "NULL");
             if (jdkHome != NULL) { privateJavaHomeDirectory = jdkHome; }
             else
             {
                 // No JDK, search JRE
                 char *jreHome = getJREHome();
+                post("getHome: jreHome: %s", jreHome != NULL ? jreHome : "NULL");
+
                 privateJavaHomeDirectory = jreHome;
             }
         }
@@ -382,6 +390,7 @@ char * getJavaHome()
     if (home == NULL) { return NULL; }
 
     snprintf(path, sizeof(path), "%s/bin/java", home);
+    post("getJavaHome: path: %s", path);
     return strdup(path);
 }
 

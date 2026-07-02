@@ -254,7 +254,6 @@ void IVirtualMachine::startJVM()
 		objc_registerThreadWithCollectorFunction = (objc_registerThreadWithCollector_t) dlsym(handleLibObjc, OBJC_GCREGISTER);
 	}
 
-
 	char * baseDir = getJavaHome();
 	char * dylib;
 	char * jli;
@@ -663,7 +662,6 @@ bool IVirtualMachine::launchJVM()
 	}
 
 	res = my_JNI_GetCreatedJavaVMs(vmBuffer, 10, &nVMs);
-
 
 	if (nVMs > 0)
 	{

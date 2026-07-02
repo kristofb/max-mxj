@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <strings.h>
 #include <dlfcn.h>
+#include "ext.h"
 
 #define MXJ_JAVA_PATH_MAX_LEN 4096
 
@@ -145,6 +146,7 @@ char *getEmbeddedHomeDirectory()
 
         //here we're going to find where our library file is on OSX using dladdr
         //this returns the executable based on a symbol in our memory
+        //example: /Applications/Max.app/Contents/Resources/C74/packages/max-mxj/externals/mxj.mxo/Contents/MacOS/mxj
         Dl_info myPluginInfo;
         if (dladdr("mxj", &myPluginInfo) != 0)
         {
@@ -186,6 +188,12 @@ char *getEmbeddedHomeDirectory()
                     }
                 }
             }
+            else {
+                error("dladdr did not return a valid dli_fname");
+            }
+        }
+        else {
+            error("dladdr failed to find the binary path for mxj");
         }
     }
     return privateEmbeddedHomeDirectory;
@@ -348,7 +356,7 @@ char *getHome()
     {
         privateJavaHomeDirectorySearched = true;
 
-        // Search embedded JRE (only works with x64)
+        // Search embedded JRE
         char *embeddedHome = getEmbeddedHomeDirectory();
         if (embeddedHome != NULL) { privateJavaHomeDirectory = embeddedHome; }
         else
@@ -403,55 +411,49 @@ char *getJavaJli()
     return strdup(path);
 }
 
-const char * findVMLibrary( char* command ) {
-    char       *start, *end;
-    char       *version, *cmd;
-    int        length;
-    const char *result;
+// const char * findVMLibrary( char* command ) {
+//     char       *start, *end;
+//     char       *version, *cmd;
+//     int        length;
+//     const char *result;
 
-    /*check first to see if command already points to the library */
-    if (strcmp(command, JAVA_FRAMEWORK) == 0) {
-        return JAVA_FRAMEWORK;
-    }
+//     /*check first to see if command already points to the library */
+//     if (strcmp(command, JAVA_FRAMEWORK) == 0) {
+//         return JAVA_FRAMEWORK;
+//     }
 
-    /* select a version to use based on the command */
-    start = strstr(command, "/Versions/");
-    if (start != NULL){
-        start += 10;
-        end = strchr(start, dirSeparator);
-        if (end != NULL && end > start) {
-            length  = (int)(end - start);
-            version = (char *) malloc(length + 1);
-            strncpy(version, start, length);
-            version[length] = 0;
+//     /* select a version to use based on the command */
+//     start = strstr(command, "/Versions/");
+//     if (start != NULL){
+//         start += 10;
+//         end = strchr(start, dirSeparator);
+//         if (end != NULL && end > start) {
+//             length  = (int)(end - start);
+//             version = (char *) malloc(length + 1);
+//             strncpy(version, start, length);
+//             version[length] = 0;
 
-            /*only set a version if it starts with a number */
-            if(strtol(version, NULL, 10) != 0 || version[0] == '0') {
-                setenv("JAVA_JVM_VERSION", version, 1);
-            }
+//             /*only set a version if it starts with a number */
+//             if(strtol(version, NULL, 10) != 0 || version[0] == '0') {
+//                 setenv("JAVA_JVM_VERSION", version, 1);
+//             }
 
-            free(version);
-        }
-    }
-    cmd = command;
-    if (strstr(cmd, "/JavaVM.framework/") != NULL && (strstr(cmd, "/Current/") != NULL || strstr(cmd, "/A/") != NULL)) {
-        cmd = getJavaHome();
-    }
-    // This is necessary to initialize isSUN
-    getJavaVersion(cmd);
-    result = JAVA_FRAMEWORK;
-    if (strstr(cmd, "/JavaVM.framework/") == NULL) {
-        char *lib = findLib(cmd);
-        if (lib != NULL) {
-            result = lib;
-        }
-    }
-    if (cmd != command) { free(cmd); }
-    return result;
-}
-
-
-
-
-
-
+//             free(version);
+//         }
+//     }
+//     cmd = command;
+//     if (strstr(cmd, "/JavaVM.framework/") != NULL && (strstr(cmd, "/Current/") != NULL || strstr(cmd, "/A/") != NULL)) {
+//         cmd = getJavaHome();
+//     }
+//     // This is necessary to initialize isSUN
+//     getJavaVersion(cmd);
+//     result = JAVA_FRAMEWORK;
+//     if (strstr(cmd, "/JavaVM.framework/") == NULL) {
+//         char *lib = findLib(cmd);
+//         if (lib != NULL) {
+//             result = lib;
+//         }
+//     }
+//     if (cmd != command) { free(cmd); }
+//     return result;
+// }

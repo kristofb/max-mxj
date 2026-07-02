@@ -75,10 +75,6 @@ jre/jre_aarch64/Contents/Frameworks
 
 If you want to use a zulu jre, you must extract its content to match the above structure.
 
-The JRE can be found here after installing a java internet plugin:
-"/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/"
-Copy that folder and rename it "jre".
-
 ### Windows
 On Windows, it searches in that order: embedded JRE, on system JDK, on system JRE
 The search for an embedded JRE is done in the application, it must be a folder named "jre" placed in the same folder as the application .exe 

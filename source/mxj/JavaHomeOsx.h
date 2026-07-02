@@ -19,7 +19,7 @@ char * getEmbeddedHomeDirectory(void);
 char * getJavaVersion(char* command);
 char * getJavaHome(void);
 char * getJavaJli(void);
-const char * findVMLibrary( char* command );
+//const char * findVMLibrary( char* command );
 char * findLib( char* command );
 int isVMLibrary( _TCHAR* vm );
 

@@ -149,8 +149,10 @@ char *getEmbeddedHomeDirectory()
         //here we're going to find where our library file is on OSX using dladdr
         //this returns the executable based on a symbol in our memory
         //example: /Applications/Max.app/Contents/Resources/C74/packages/max-mxj/externals/mxj.mxo/Contents/MacOS/mxj
+        //we use a function pointer from this translation unit so dladdr reliably resolves to the mxj binary,
+        //regardless of string deduplication or library loading order changes (e.g. Max 9 Hardened Runtime)
         Dl_info myPluginInfo;
-        if (dladdr("mxj", &myPluginInfo) != 0)
+        if (dladdr((void*)getEmbeddedHomeDirectory, &myPluginInfo) != 0)
         {
             if (myPluginInfo.dli_fname != NULL)
             {

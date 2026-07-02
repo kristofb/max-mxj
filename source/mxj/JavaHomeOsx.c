@@ -325,31 +325,62 @@ char *getJREHome()
 /** Search for a JDK on the machine */
 char *getJDKHome()
 {
+    // 1. Honour JAVA_HOME if the user (or the OS launch environment) has set it.
+    //    This avoids spawning a child process entirely, which matters when mxj is
+    //    loaded inside a sandboxed host (e.g. Max 9 with Hardened Runtime) where
+    //    popen() may be restricted or blocked.
+    const char *javaHomeEnv = getenv("JAVA_HOME");
+    if (javaHomeEnv != NULL && javaHomeEnv[0] != '\0')
+    {
+        // Verify the path actually contains a java binary before trusting it.
+        char probe[MXJ_JAVA_PATH_MAX_LEN];
+        snprintf(probe, sizeof(probe), "%s/bin/java", javaHomeEnv);
+        if (fileExists(probe, true))
+        {
+            post("getJDKHome: using JAVA_HOME env: %s", javaHomeEnv);
+            return strdup(javaHomeEnv);
+        }
+    }
+
+    // 2. Fall back to /usr/libexec/java_home (requires process spawn).
     FILE *fp;
     char path[MXJ_JAVA_PATH_MAX_LEN];
-    char *result, *start;
+    char *start;
     snprintf(path, sizeof(path), "/usr/libexec/java_home -a %s", JAVA_HOME_ARCH);
     fp = popen(path, "r");
     if (fp == NULL)
     {
         // No JDK certainly
+        // popen failed — likely a sandbox restriction or missing utility.
         return NULL;
     }
 
     // Build and return JDK home path
+    // Read all output lines; the last one is the resolved home path.
+    path[0] = '\0';
     while (fgets(path, sizeof(path) - 1, fp) != NULL) {}
+    pclose(fp);  // always close, even on early-out paths below
+
+    // java_home echoes back the -a flag when no matching JVM is found.
     if (strstr(path, " -a "))
     {
         return NULL;
     }
-    result = path;
-    start  = strchr(result, '\n');
+
+    // Strip trailing newline.
+    start = strchr(path, '\n');
     if (start)
     {
-        start[0] = 0;
+        start[0] = '\0';
     }
 
-    return strdup(result);
+    if (path[0] == '\0')
+    {
+        return NULL;
+    }
+
+    post("getJDKHome: found via java_home: %s", path);
+    return strdup(path);
 }
 
 /** Search for a JDK or JRE java home */

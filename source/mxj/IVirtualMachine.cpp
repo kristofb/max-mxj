@@ -598,9 +598,14 @@ bool IVirtualMachine::launchJVM()
 	strcpy(classPathString, constClassPath->data());
 
 	// Construct a list of library paths
-	//we never use this so for now it is not library path
-	//it should report to bootclasspath
-	string *constLibraryPath = new string("-Djava.class.path=");
+	// Note: libraryPaths is never populated by the current mxj code, so this string will
+	// always be "-Djava.library.path=" (empty value) and is only added to the JVM options
+	// when libraryPaths actually contains entries.
+	// Previously this used "-Djava.class.path=" by mistake, which injected an empty
+	// -Djava.class.path= as options[0] ahead of the real classpath from jvmStartupOptions,
+	// causing JVM versions that honour the first occurrence of a -D property to start with
+	// an empty classpath (breaking all Java class loading).
+	string *constLibraryPath = new string("-Djava.library.path=");
 
 	for(i=libraryPaths->begin(), j = 0; i != libraryPaths->end(); ++i, ++j)
 	{
@@ -620,12 +625,17 @@ bool IVirtualMachine::launchJVM()
 	libraryPathString=(char *)malloc(constLibraryPath->size()+1);
 	strcpy(libraryPathString, constLibraryPath->data());
 
-	post("library path: %s", libraryPathString);
-
 	nbOptions=0;
-	options[nbOptions].optionString = libraryPathString;
-	this->additionalOptions[nbOptions] = libraryPathString;
-	nbOptions++;
+
+	// Only include the library path option when it actually carries entries; an empty
+	// -Djava.library.path= is a no-op and just wastes an option slot.
+	if (!libraryPaths->empty())
+	{
+		post("library path: %s", libraryPathString);
+		options[nbOptions].optionString = libraryPathString;
+		this->additionalOptions[nbOptions] = libraryPathString;
+		nbOptions++;
+	}
 
 	for(i=jvmStartupOptions->begin(); i != jvmStartupOptions->end(); ++i)
 	{

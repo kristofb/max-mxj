@@ -2737,14 +2737,13 @@ short mxj_generate_default_options(JavaVMOption* options)
 	options[1].extraInfo = NULL;
 	options[2].optionString = (char*)sysmem_newptr(32);
 	options[2].extraInfo = NULL;
-	options[3].optionString = (char*)sysmem_newptr(32);
-	options[3].extraInfo = NULL;
+
+	// Note: -Xincgc (incremental GC) was removed in JDK 14 (JEP 363) and causes a fatal
+	// JVM startup error on JDK 14+ even with ignoreUnrecognized = JNI_TRUE.
+	sprintf(options[1].optionString,"-Xms32m");
+	sprintf(options[2].optionString,"-Xmx256m");
 	
-	sprintf(options[1].optionString,"-Xincgc");
-	sprintf(options[2].optionString,"-Xms32m");
-	sprintf(options[3].optionString,"-Xmx256m");
-	
-	return 4;
+	return 3;
 }
 
 short mxj_get_jvmopts(JavaVMOption* options, int *num_options, int max_opts)

@@ -325,6 +325,7 @@ char *getJREHome()
 /** Search for a JDK on the machine */
 char *getJDKHome()
 {
+    /*don't need to check JAVA_HOME if we have an embedded JRE
     // 1. Honour JAVA_HOME if the user (or the OS launch environment) has set it.
     //    This avoids spawning a child process entirely, which matters when mxj is
     //    loaded inside a sandboxed host (e.g. Max 9 with Hardened Runtime) where
@@ -341,6 +342,7 @@ char *getJDKHome()
             return strdup(javaHomeEnv);
         }
     }
+    */
 
     // 2. Fall back to /usr/libexec/java_home (requires process spawn).
     FILE *fp;
